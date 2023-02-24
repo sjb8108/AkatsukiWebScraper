@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-import AkatsukiWebScrape
 
 def webScraper(startEndTuple):
     playerDictionary = {}
@@ -14,13 +13,15 @@ def webScraper(startEndTuple):
         else:
             nameElements = soup.find("h1", style="white-space: nowrap !important;").text.strip().split()
             userTable = soup.find("table", class_="ui very basic two column compact table nopad").text.strip().split()
-            if checkForUserExceptions(url) == True:
-                pass
-            elif userTable[0] == "Clan" and userTable[1] != "PP":
+            if userTable[0] == "Clan" and userTable[1] != "PP":
                 username = ""
                 for x in range(1, len(nameElements)):
                     username = username + nameElements[x] + " "
                 username = username[0:len(username) - 1]
+                print(username)
+                print(url)
+                if nameElements[0] == "[[":
+                    username = nameElements[2]
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex+1])
                 if (pp > 0):
@@ -32,6 +33,10 @@ def webScraper(startEndTuple):
                 for x in range(0, len(nameElements)):
                     username = username + nameElements[x] + " "
                 username = username[0:len(username) - 1]
+                print(username)
+                print(url)
+                if nameElements[0] == "[[":
+                    username = nameElements[2]
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex + 1])
                 if (pp > 0):
@@ -43,6 +48,10 @@ def webScraper(startEndTuple):
                 for x in range(1, len(nameElements)):
                     username = username + nameElements[x] + " "
                 username = username[0:len(username) - 1]
+                print(username)
+                print(url)
+                if nameElements[0] == "[[":
+                    username = nameElements[2]
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex + 1])
                 if (pp > 0):
@@ -54,6 +63,10 @@ def webScraper(startEndTuple):
                 for x in range(0, len(nameElements)):
                     username = username + nameElements[x] + " "
                 username = username[0:len(username) - 1]
+                print(url)
+                print(username)
+                if nameElements[0] == "[[":
+                    username = nameElements[2]
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex + 1])
                 if (pp > 0):
@@ -73,13 +86,19 @@ def convertThousandsStringToInt(thousandNumber):
     return int(stringWithoutCommas)
 
 def findPPIndex(infoData):
-    index = 0
-    for info in infoData:
-        if info == "PP":
-            return index
-        else:
-            index+=1
+    for index in range(len(infoData)):
+        if infoData[index] == "PP":
+            try:
+                int(infoData[index + 1])
+                return index
+            except ValueError:
+                if infoData[index + 1].find("0") == -1 and infoData[index + 1].find("1") == -1\
+                        and infoData[index + 1].find("2") == -1 and infoData[index + 1].find("3") == -1\
+                        and infoData[index + 1].find("4") == -1 and infoData[index + 1].find("5") == -1 \
+                        and infoData[index + 1].find("6") == -1 and infoData[index + 1].find("7") == -1 \
+                        and infoData[index + 1].find("8") == -1 and infoData[index + 1].find("9") == -1:
+                    continue
+                else:
+                    return index
 
-def checkForUserExceptions(url):
-    if url == "https://akatsuki.pw/u/50615?mode=0&rx=1":
-        return True
+
