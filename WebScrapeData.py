@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-from dataclasses import dataclass
 import AkatsukiWebScrape
 def webScraper(startEndTuple):
     playerDictionary = {}

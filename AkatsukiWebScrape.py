@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import WebScrapeData
 #Ideas:
 # make it So they can enter if they want standard, taiko, catch
-# see if they can fix the bug so i can ask if they want the relax mode of not(Please akatsuki devs)
+# see if they can fix the bug so i can ask if they want the relax mode of not (Please akatsuki devs)
 #1. Have the user pick two numbers there difference has to be between 1000 DONE
 #2. Webscrape data from akatsuki IN PROCESS
 #3. Put info scraped into a dictonary and create a class for info storage. (Will be fun to do!)
