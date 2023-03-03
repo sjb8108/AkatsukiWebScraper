@@ -1,5 +1,3 @@
-import time
-
 from bs4 import BeautifulSoup
 import requests
 import AkatsukiWebScrape
@@ -27,10 +25,13 @@ def webScraper(startEndTuple):
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex+1])
                 ppIndex += 1
-                theUser = AkatsukiWebScrape.UserInfo(url,0,0, pp, convertThousandsStringToInt(userTable[ppIndex+3]),
-                            convertThousandsStringToInt(userTable[ppIndex+6]),convertThousandsStringToInt(userTable[ppIndex+8]),
-                            convertThousandsStringToInt(userTable[ppIndex+18]),convertAccuracyToFloat(userTable[ppIndex+20]),
-                            convertThousandsStringToInt(userTable[ppIndex+23]), getTopFiveScores(id), getMostPlayed(id))
+                if (pp > 0):
+                    weirdTupple = getScores(id, "first")
+                    theUser = AkatsukiWebScrape.UserInfo(url,None,None, pp, convertThousandsStringToInt(userTable[ppIndex+3]),
+                                convertThousandsStringToInt(userTable[ppIndex+6]),convertThousandsStringToInt(userTable[ppIndex+8]),
+                                convertThousandsStringToInt(userTable[ppIndex+18]),convertAccuracyToFloat(userTable[ppIndex+20]),
+                                convertThousandsStringToInt(userTable[ppIndex+23]), weirdTupple[1], getScores(id, "best"),
+                                getMostPlayed(id), weirdTupple[0])
                 print(theUser)
             elif userTable[0] == "Clan" and userTable[1] == "PP":
                 username = ""
@@ -44,10 +45,12 @@ def webScraper(startEndTuple):
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex + 1])
                 if (pp > 0):
-                    theUser = AkatsukiWebScrape.UserInfo(url, 0, 0, pp,convertThousandsStringToInt(userTable[5]),
+                    weirdTupple = getScores(id, "first")
+                    theUser = AkatsukiWebScrape.UserInfo(url, None, None, pp,convertThousandsStringToInt(userTable[5]),
                                         convertThousandsStringToInt(userTable[8]),convertThousandsStringToInt(userTable[10]),
                                         convertThousandsStringToInt(userTable[20]),convertAccuracyToFloat(userTable[22]),
-                                        convertThousandsStringToInt(userTable[25]),getTopFiveScores(id), getMostPlayed(id))
+                                        convertThousandsStringToInt(userTable[25]),weirdTupple[1], getScores(id, "best"),
+                                        getMostPlayed(id), weirdTupple[0])
                     print(theUser)
             elif userTable[6] == "Clan" and userTable[7] != "PP":
                 username = ""
@@ -62,11 +65,12 @@ def webScraper(startEndTuple):
                 pp = convertThousandsStringToInt(userTable[ppIndex + 1])
                 ppIndex+=1
                 if (pp > 0):
+                    weirdTupple = getScores(id, "first")
                     theUser = AkatsukiWebScrape.UserInfo(url, convertRankingToInt(userTable[2]), convertRankingToInt(userTable[5]), pp,
                                     convertThousandsStringToInt(userTable[ppIndex+3]),convertThousandsStringToInt(userTable[ppIndex+6]),
                                     convertThousandsStringToInt(userTable[ppIndex+8]),convertThousandsStringToInt(userTable[ppIndex + 18]),
                                     convertAccuracyToFloat(userTable[ppIndex+20]),convertThousandsStringToInt(userTable[ppIndex+23]),
-                                    getTopFiveScores(id), getMostPlayed(id))
+                                    weirdTupple[1], getScores(id, "best"), getMostPlayed(id), weirdTupple[0])
                     print(theUser)
             elif userTable[6] == "Clan" and userTable[7] == "PP":
                 username = ""
@@ -80,13 +84,13 @@ def webScraper(startEndTuple):
                 ppIndex = findPPIndex(userTable)
                 pp = convertThousandsStringToInt(userTable[ppIndex + 1])
                 if (pp > 0):
+                    weirdTupple = getScores(id, "first")
                     theUser = AkatsukiWebScrape.UserInfo(url, convertRankingToInt(userTable[2]), convertRankingToInt(userTable[5]),
                                         pp, convertThousandsStringToInt(userTable[11]),convertThousandsStringToInt(userTable[14]),
                                         convertThousandsStringToInt(userTable[16]),convertThousandsStringToInt(userTable[26]),
                                         convertAccuracyToFloat(userTable[28]),convertThousandsStringToInt(userTable[31]),
-                                        getTopFiveScores(id), getMostPlayed(id))
-                    for score in theUser.scores:
-                        print(score)
+                                        weirdTupple[1], getScores(id, "best")[0], getMostPlayed(id), weirdTupple[0])
+                    print(theUser)
             else:
                 pass
 def findPPIndex(infoData):
@@ -118,11 +122,17 @@ def convertAccuracyToFloat(accuracyNumber):
 
 def convertRankingToInt(rankNumber):
     return int(rankNumber[1:len(rankNumber)])
-def getTopFiveScores(id):
-    url = "https://akatsuki.pw/api/v1/users/scores/best?mode=0&p=1&l=10&rx=0&id="+str(id)+"&uid="+str(id)+"&actual_id=0"
+def getScores(id, type):
+    url = "https://akatsuki.pw/api/v1/users/scores/"+str(type)+"?mode=0&p=1&l=10&rx=0&id="+str(id)+"&uid="+str(id)+"&actual_id=0"
     page = requests.get(url, allow_redirects=False)
     soup = BeautifulSoup(page.content, 'html.parser')
     scoresList = soup.text.split()
+    try:
+        index = scoresList.index("\"total\":")
+        firsts = str(scoresList[index + 1])
+        firsts = int(firsts[0:len(firsts) - 1])
+    except ValueError:
+        firsts = 0
     idkWhatToCallThis = str("\"score\":")
     ender = "}"
     allScores = []
@@ -178,8 +188,24 @@ def getTopFiveScores(id):
             if score[x] == "\"accuracy\":":
                 acc = str(score[x + 1])
                 acc = float(acc[0:len(acc) - 1])
-        userScores.append(AkatsukiWebScrape.ScoreInfo(beatMapURL, artist, name, diff, scorePlay, combo, totalPP, acc))
-    return userScores
+            if score[x] == "\"count_300\":":
+                num300 = str(score[x + 1])
+                num300 = int(num300[0:len(num300) - 1])
+            if score[x] == "\"count_100\":":
+                num100 = str(score[x + 1])
+                num100 = int(num100[0:len(num100) - 1])
+            if score[x] == "\"count_50\":":
+                num50 = str(score[x + 1])
+                num50 = int(num50[0:len(num50) - 1])
+            if score[x] == "\"count_miss\":":
+                numMiss = str(score[x + 1])
+                numMiss = int(numMiss[0:len(numMiss) - 1])
+        if len(allScores) == 0:
+            return None
+        else:
+            userScores.append(AkatsukiWebScrape.ScoreInfo(beatMapURL, artist, name, diff, scorePlay, combo, totalPP, acc,
+                                                          num300, num100, num50, numMiss))
+    return (userScores, firsts)
 
 def getMostPlayed(id):
     return []

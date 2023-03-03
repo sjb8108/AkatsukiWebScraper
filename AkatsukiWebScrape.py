@@ -7,7 +7,7 @@ import WebScrapeData
 # Add more attributes to scoreInfo by connecting to the osu beatmap aka the mapper
 #1. Have the user pick two numbers there difference has to be between 1000 DONE
 #2. Webscrape data from akatsuki IN PROCESS
-#3. Put info scraped into a dictonary and create a class for info storage. ALSO IN PROCESS
+#3. Put info scraped into a dictonary and create a class for info storage. DONE BOZO
 #4. Put into a csv file(Bruh moment to make it program fast)
 #4. Do shit with it/Ask user info to access (Will take alot of time cause theres alot to implement)
 #5. Orangize it and make table and graphs with it (Will be poggers)
@@ -15,8 +15,8 @@ import WebScrapeData
 @dataclass
 class UserInfo:
     userURL: str
-    globalRank: int
-    countryRank: int
+    globalRank: int #if not present cause they havent played in awhile but still have pp, the value will be -1
+    countryRank: int  #if not present cause they havent played in awhile but still have pp, the value will be -1
     totalPerforamcePoints: int
     rankedScore: int
     totalScore: int
@@ -24,8 +24,10 @@ class UserInfo:
     totalHits: int
     accuracy: float
     maxCombo: int
-    scores: list
-    mostPlayed: list
+    totalFirstPlaces: int
+    bestScores: list
+    mostPlayedScores: list
+    firstPlaceScores: list #if more than ten than it will get the most recent 10 first place scores
 
 @dataclass()
 class ScoreInfo:
@@ -33,11 +35,24 @@ class ScoreInfo:
     songArtist: str
     songName: str
     songDiff: str
-    #songMapper: str
     playScore: int
     playCombo: int
     playPerformancePoints: float
     playAcc: float
+    play300: int
+    play100: int
+    play50: int
+    playMiss: int
+
+@dataclass()
+class MostScoreInfo:
+    websiteLink: int
+    amountPlayed: int
+    songArtist: str
+    songName: str
+    songDiff: int
+
+
 
 def startAndEndID():
     print("To start we will need to get an starting ID and ending ID")
@@ -56,7 +71,7 @@ def startAndEndID():
 
 def main():
     print("Welcome to the Akatsuki Web Scraper!")
-    time.sleep(3)
+    time.sleep(2)
     idTuple = startAndEndID()
     playersDict = WebScrapeData.webScraper(idTuple)
 
