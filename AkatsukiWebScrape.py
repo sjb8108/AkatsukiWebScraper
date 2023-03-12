@@ -1,14 +1,14 @@
 import time
 from dataclasses import dataclass
 import WebScrapeData
+import pickle #Thank god this exists
 #Ideas:
 # make it So they can enter if they want standard, taiko, catch
 # see if they can fix the bug so i can ask if they want the relax mode of not (Please akatsuki devs)
-# Add more attributes to scoreInfo by connecting to the osu beatmap aka the mapper
 #1. Have the user pick two numbers there difference has to be between 1000 DONE
 #2. Webscrape data from akatsuki IN PROCESS
 #3. Put info scraped into a dictonary and create a class for info storage. DONE BOZO
-#4. Put into a csv file(Bruh moment to make it program fast)
+#4. Put into a csv file(Bruh moment to make it program fast) READY FOR NEED TO FIX #2
 #4. Do shit with it/Ask user info to access (Will take alot of time cause theres alot to implement)
 #5. Orangize it and make table and graphs with it (Will be poggers)
 
@@ -69,11 +69,36 @@ def startAndEndID():
         endID = input("Entering the ending ID: ")
     return (int(startID), int(endID))
 
+def populateFile(idTuple):
+    playersDict = WebScrapeData.webScraper(idTuple)
+    #f = open("Data41000_46000.txt", "wb")
+    #pickle.dump(playersDict, f)
+    #f.close()
+    #fileLoad = open("Data41000_46000.txt", "rb")
+    #dictionary = pickle.load(fileLoad)
+    return playersDict
+
+def getAllData():
+    startNum = 1000
+    endingNum = 6000
+    allData = {}
+    while (endingNum != 46000):
+        file = "Data"+str(startNum)+"_"+str(endingNum)+".txt"
+        fileLoad = open(file, 'rb')
+        dataDict = pickle.load(fileLoad)
+        allData.update(dataDict)
+        fileLoad.close()
+        startNum+=5000
+        endingNum+=5000
+        return allData
 def main():
     print("Welcome to the Akatsuki Web Scraper!")
     time.sleep(2)
     idTuple = startAndEndID()
-    playersDict = WebScrapeData.webScraper(idTuple)
+    dict = populateFile(idTuple)
+    #dict = getAllData()
+    print(dict)
+
 
 if __name__ == '__main__':
     main()

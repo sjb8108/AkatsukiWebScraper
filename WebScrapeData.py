@@ -5,7 +5,8 @@ def webScraper(startEndTuple):
     playerDictionary = {}
     for id in range(startEndTuple[0], startEndTuple[1]):
         url = "https://akatsuki.pw/u/" + str(id) + "?mode=0&rx=0"
-        page = requests.get(url, allow_redirects=False)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'}
+        page = requests.get(url, allow_redirects=False, headers=headers)
         soup = BeautifulSoup(page.content, 'html.parser')
         nameElements = soup.find("h1", style="white-space: nowrap !important;")
         if nameElements is None:
@@ -32,12 +33,17 @@ def webScraper(startEndTuple):
                                 convertThousandsStringToInt(userTable[ppIndex+18]),convertAccuracyToFloat(userTable[ppIndex+20]),
                                 convertThousandsStringToInt(userTable[ppIndex+23]), weirdTupple[1], getScores(id, "best"),
                                 getMostPlayed(id), weirdTupple[0])
-                print(theUser)
+                    playerDictionary[username] = theUser
+                    print(theUser)
             elif userTable[0] == "Clan" and userTable[1] == "PP":
                 username = ""
                 for x in range(0, len(nameElements)):
                     username = username + nameElements[x] + " "
                 username = username[0:len(username) - 1]
+                if int(id) == 50615:
+                    userTable.pop(0)
+                    userTable.pop(0)
+                    username = "Kat_"
                 print(url)
                 if nameElements[0] == "[[":
                     username = nameElements[2]
@@ -51,6 +57,7 @@ def webScraper(startEndTuple):
                                         convertThousandsStringToInt(userTable[20]),convertAccuracyToFloat(userTable[22]),
                                         convertThousandsStringToInt(userTable[25]),weirdTupple[1], getScores(id, "best"),
                                         getMostPlayed(id), weirdTupple[0])
+                    playerDictionary[username] = theUser
                     print(theUser)
             elif userTable[6] == "Clan" and userTable[7] != "PP":
                 username = ""
@@ -71,6 +78,7 @@ def webScraper(startEndTuple):
                                     convertThousandsStringToInt(userTable[ppIndex+8]),convertThousandsStringToInt(userTable[ppIndex + 18]),
                                     convertAccuracyToFloat(userTable[ppIndex+20]),convertThousandsStringToInt(userTable[ppIndex+23]),
                                     weirdTupple[1], getScores(id, "best"), getMostPlayed(id), weirdTupple[0])
+                    playerDictionary[username] = theUser
                     print(theUser)
             elif userTable[6] == "Clan" and userTable[7] == "PP":
                 username = ""
@@ -91,8 +99,10 @@ def webScraper(startEndTuple):
                                         convertAccuracyToFloat(userTable[28]),convertThousandsStringToInt(userTable[31]),
                                         weirdTupple[1], getScores(id, "best")[0], getMostPlayed(id), weirdTupple[0])
                     print(theUser)
+                    playerDictionary[username] = theUser
             else:
-                pass
+                continue
+    return playerDictionary
 def findPPIndex(infoData):
     for index in range(len(infoData)):
         if infoData[index] == "PP":
@@ -208,5 +218,59 @@ def getScores(id, type):
     return (userScores, firsts)
 
 def getMostPlayed(id):
-    return []
-
+    url = "https://akatsuki.pw/api/v1/users/most_played?id="+str(id)+"&rx=0&mode=0"
+    page = requests.get(url, allow_redirects=False)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    scoresList = soup.text.split()
+    idkWhatToCallThis2 = str("\"playcount\":")
+    ender = "}"
+    allScores = []
+    userMostScores = []
+    for x in range(len(scoresList)):
+        if idkWhatToCallThis2 == str(scoresList[0]):
+            score = []
+            score.append(str(scoresList[0]))
+            scoresList.remove(scoresList[0])
+            for x in range(len(scoresList)):
+                if ender == str(scoresList[x]):
+                    break
+                else:
+                    score.append(scoresList[x])
+            allScores.append(score)
+        else:
+            scoresList.remove(scoresList[0])
+    for score in allScores:
+        for x in range(len(score)):
+            if score[x] == "\"beatmapset_id\":":
+                id = str(score[x+1])
+                id = id[0:len(id)-1]
+                beatMapURL = "https://osu.ppy.sh/beatmapsets/"+id
+            if score[x] == "\"song_name\":":
+                artist = ""
+                name = ""
+                diff = ""
+                for j in range(x, score.index("\"ar\":")):
+                    if score[j] == "-":
+                        indexStart = j
+                        for k in range(x+1, j):
+                            artist = artist + score[k] + " "
+                        artist = artist[1:len(artist)-1]
+                    elif score[j].startswith("["):
+                        indexEnd = j
+                        for m in range(j, score.index("\"ar\":")):
+                            diff = diff + score[m] + " "
+                        diff = diff[1:len(diff)-4]
+                for n in range(indexStart+1,indexEnd):
+                    if score[n].startswith("\""):
+                        break
+                    name = name + score[n] + " "
+            if score[x] == "\"playcount\":":
+                count = str(score[x + 1])
+                count = int(count[0:len(count) - 1])
+        if len(allScores) == 0:
+            return None
+        elif len(userMostScores) >= 10:
+            break
+        else:
+            userMostScores.append(AkatsukiWebScrape.MostScoreInfo(beatMapURL, count, artist, name, diff))
+    return userMostScores
