@@ -17,7 +17,16 @@ def webScraper(startEndTuple):
             if userTable[0] == "Clan" and userTable[1] != "PP":
                 username = ""
                 for x in range(1, len(nameElements)):
-                    username = username + nameElements[x] + " "
+                    splitElements = nameElements[x][0]
+                    ascii = ord(splitElements)
+                    if (ascii > 127):
+                        pass
+                    elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
+                        username = username + nameElements[x] + " "
+                    elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (ascii >= 97 and ascii <= 122)):
+                        username = username + nameElements[x] + " "
+                    else:
+                        pass
                 username = username[0:len(username) - 1]
                 print(url)
                 if nameElements[0] == "[[":
@@ -38,7 +47,17 @@ def webScraper(startEndTuple):
             elif userTable[0] == "Clan" and userTable[1] == "PP":
                 username = ""
                 for x in range(0, len(nameElements)):
-                    username = username + nameElements[x] + " "
+                    splitElements = nameElements[x][0]
+                    ascii = ord(splitElements)
+                    if (ascii > 127):
+                        pass
+                    elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
+                        username = username + nameElements[x] + " "
+                    elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (
+                            ascii >= 97 and ascii <= 122)):
+                        username = username + nameElements[x] + " "
+                    else:
+                        pass
                 username = username[0:len(username) - 1]
                 if int(id) == 50615:
                     userTable.pop(0)
@@ -69,7 +88,17 @@ def webScraper(startEndTuple):
             elif userTable[6] == "Clan" and userTable[7] != "PP":
                 username = ""
                 for x in range(1, len(nameElements)):
-                    username = username + nameElements[x] + " "
+                    splitElements = nameElements[x][0]
+                    ascii = ord(splitElements)
+                    if (ascii > 127):
+                        pass
+                    elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
+                        username = username + nameElements[x] + " "
+                    elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (
+                            ascii >= 97 and ascii <= 122)):
+                        username = username + nameElements[x] + " "
+                    else:
+                        pass
                 username = username[0:len(username) - 1]
                 print(url)
                 if nameElements[0] == "[[":
@@ -90,7 +119,17 @@ def webScraper(startEndTuple):
             elif userTable[6] == "Clan" and userTable[7] == "PP":
                 username = ""
                 for x in range(0, len(nameElements)):
-                    username = username + nameElements[x] + " "
+                    splitElements = nameElements[x][0]
+                    ascii = ord(splitElements)
+                    if (ascii > 127):
+                        pass
+                    elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
+                        username = username + nameElements[x] + " "
+                    elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (
+                            ascii >= 97 and ascii <= 122)):
+                        username = username + nameElements[x] + " "
+                    else:
+                        pass
                 username = username[0:len(username) - 1]
                 print(url)
                 if nameElements[0] == "[[":
@@ -191,7 +230,10 @@ def getScores(id, type):
                 for n in range(indexStart+1,indexEnd):
                     if score[n].startswith("\""):
                         break
-                    name = name + score[n] + " "
+                    if score[n].__contains__("u0026"):
+                        name = name + "&" + " "
+                    else:
+                        name = name + score[n] + " "
                 name = name[0:len(name)-1]
             if score[x] == "\"score\":":
                 scorePlay = str(score[x + 1])

@@ -5,10 +5,11 @@ import pickle #Thank god this exists
 #Ideas:
 # make it So they can enter if they want standard, taiko, catch
 # see if they can fix the bug so i can ask if they want the relax mode of not (Please akatsuki devs)
+#fix bug with song diffs having unquie character for example user 70993
 #1. Have the user pick two numbers there difference has to be between 1000 DONE
 #2. Webscrape data from akatsuki IN PROCESS
 #3. Put info scraped into a dictonary and create a class for info storage. DONE BOZO
-#4. Put into a csv file(Bruh moment to make it program fast) READY FOR NEED TO FIX #2
+#4. Put into a csv file(Bruh moment to make it program fast) IN PROCESS
 #4. Do shit with it/Ask user info to access (Will take alot of time cause theres alot to implement)
 #5. Orangize it and make table and graphs with it (Will be poggers)
 
