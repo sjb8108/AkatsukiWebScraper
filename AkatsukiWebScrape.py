@@ -72,10 +72,10 @@ def startAndEndID():
 
 def populateFile(idTuple):
     playersDict = WebScrapeData.webScraper(idTuple)
-    f = open("Data111000_1160000.txt", "wb")
+    f = open("Data/Data111000_116000.txt", "wb")
     pickle.dump(playersDict, f)
     f.close()
-    fileLoad = open("Data111000_1160000.txt", "rb")
+    fileLoad = open("Data/Data111000_116000.txt", "rb")
     dictionary = pickle.load(fileLoad)
     return dictionary
 
@@ -83,22 +83,42 @@ def getAllData():
     startNum = 1000
     endingNum = 6000
     allData = {}
-    while (endingNum != 46000):
-        file = "Data"+str(startNum)+"_"+str(endingNum)+".txt"
+    counter = 0
+    while (counter <= 22):
+        file = "Data\Data"+str(startNum)+"_"+str(endingNum)+".txt"
         fileLoad = open(file, 'rb')
         dataDict = pickle.load(fileLoad)
         allData.update(dataDict)
         fileLoad.close()
         startNum+=5000
         endingNum+=5000
-        return allData
+        counter+=1
+    return allData
+
+def fixBuggedUsernames(dict):
+    for person in dict:
+        persons = str(person)
+        ascii = (ord(persons[0:1]))
+        if (ascii > 127):
+            dict = WebScrapeData.fixUsername(persons, dict)
+        elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
+            pass
+        elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (
+                ascii >= 97 and ascii <= 122)):
+            pass
+        else:
+            dict = WebScrapeData.fixUsername(persons, dict)
+    return dict
 def main():
     print("Welcome to the Akatsuki Web Scraper!")
     time.sleep(2)
-    idTuple = startAndEndID()
-    dict = populateFile(idTuple)
-    #dict = getAllData()
+    #idTuple = startAndEndID() used to get data but not needed in final project
+    #dict = populateFile(idTuple) used to get data but not needed in final project
+    dict = getAllData()
+    dict = fixBuggedUsernames(dict)
+    print(len(dict))
     print(dict)
+
 
 
 if __name__ == '__main__':

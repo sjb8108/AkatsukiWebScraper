@@ -178,6 +178,30 @@ def convertAccuracyToFloat(accuracyNumber):
 
 def convertRankingToInt(rankNumber):
     return int(rankNumber[1:len(rankNumber)])
+
+def fixUsername(name, dictionary):
+    dictionaries = dict(dictionary)
+    info = dictionaries[name]
+    username = ""
+    for x in range(0, len(name)):
+        splitElements = list(name)
+        ascii = ord(splitElements[x])
+        if (ascii > 127):
+            pass
+        elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
+            username = username + name[x]
+        elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (
+                ascii >= 97 and ascii <= 122)):
+            username = username + name[x]
+        else:
+            pass
+    usernameList = list(username)
+    while usernameList[0] == " ":
+        username = username[1:len(username)]
+        usernameList.pop(0)
+    dictionaries.pop(name)
+    dictionaries[username] = info
+    return dictionaries
 def getScores(id, type):
     url = "https://akatsuki.pw/api/v1/users/scores/"+str(type)+"?mode=0&p=1&l=10&rx=0&id="+str(id)+"&uid="+str(id)+"&actual_id=0"
     page = requests.get(url, allow_redirects=False)
