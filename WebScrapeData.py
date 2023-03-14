@@ -44,6 +44,13 @@ def webScraper(startEndTuple):
                     userTable.pop(0)
                     userTable.pop(0)
                     username = "Kat_"
+                if int(id) == 78485:
+                    userTable.pop(0)
+                    username = "pea_old"
+                if int(id) == 80388:
+                    userTable.pop(0)
+                    userTable.pop(0)
+                    username = "[ MYSTIK ]"
                 print(url)
                 if nameElements[0] == "[[":
                     username = nameElements[2]

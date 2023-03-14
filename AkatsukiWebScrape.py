@@ -63,7 +63,7 @@ def startAndEndID():
     time.sleep(2)
     startID = int(input("Enter the starting ID: "))
     endID = int(input("Entering the ending ID: "))
-    while (endID-startID > 5000000) or (startID > endID) or (startID < 1000) or (endID > 112855):
+    while (endID-startID > 5000000) or (startID > endID) or (startID < 1000) or (endID > 116000):
         print("Not sufficent id inputs, try again!")
         startID = input("Enter the starting ID: ")
         endID = input("Entering the ending ID: ")
@@ -71,12 +71,12 @@ def startAndEndID():
 
 def populateFile(idTuple):
     playersDict = WebScrapeData.webScraper(idTuple)
-    #f = open("Data41000_46000.txt", "wb")
-    #pickle.dump(playersDict, f)
-    #f.close()
-    #fileLoad = open("Data41000_46000.txt", "rb")
-    #dictionary = pickle.load(fileLoad)
-    return playersDict
+    f = open("Data111000_1160000.txt", "wb")
+    pickle.dump(playersDict, f)
+    f.close()
+    fileLoad = open("Data111000_1160000.txt", "rb")
+    dictionary = pickle.load(fileLoad)
+    return dictionary
 
 def getAllData():
     startNum = 1000
