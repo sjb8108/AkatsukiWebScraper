@@ -1,6 +1,7 @@
 import time
 from dataclasses import dataclass
 import WebScrapeData
+import DataAnalyzation
 import pickle #Thank god this exists
 #Ideas:
 # make it So they can enter if they want standard, taiko, catch
@@ -114,10 +115,22 @@ def main():
     time.sleep(2)
     #idTuple = startAndEndID() used to get data but not needed in final project
     #dict = populateFile(idTuple) used to get data but not needed in final project
+    print("All data collected is from a private osu server I play on.")
+    time.sleep(3)
+    print("Once the data is loaded in you will be presented with a list of actions that you can do.")
+    time.sleep(4)
+    print("Choose the letter associated with action.")
+    time.sleep(2)
+    print("At the end of each action you can choose to do a different action or stop the program.")
+    time.sleep(3)
+    print("Enough of me rambling lets go collect and analzye some data!")
+    time.sleep(2)
+    print("Getting and Loading data...")
     dict = getAllData()
     dict = fixBuggedUsernames(dict)
-    print(len(dict))
-    print(dict)
+    print("All data collected!")
+    time.sleep(2)
+    DataAnalyzation.choosingActions(dict)
 
 
 

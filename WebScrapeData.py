@@ -283,6 +283,7 @@ def getScores(id, type):
             if score[x] == "\"count_miss\":":
                 numMiss = str(score[x + 1])
                 numMiss = int(numMiss[0:len(numMiss) - 1])
+            #Starting debugging here
         if len(allScores) == 0:
             return None
         else:
@@ -340,6 +341,7 @@ def getMostPlayed(id):
             if score[x] == "\"playcount\":":
                 count = str(score[x + 1])
                 count = int(count[0:len(count) - 1])
+            #Start debugging here
         if len(allScores) == 0:
             return None
         elif len(userMostScores) >= 10:
