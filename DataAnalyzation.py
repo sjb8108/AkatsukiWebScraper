@@ -61,6 +61,7 @@ def actionA(dict):
         try:
             name = input("Enter the username you would like to look up: ")
             info = dict[name]
+
         except:
             print("That name does not exist or that user has no data")
             time.sleep(2)
