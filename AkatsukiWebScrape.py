@@ -17,8 +17,8 @@ import pickle #Thank god this exists
 @dataclass
 class UserInfo:
     userURL: str
-    globalRank: int #if not present cause they havent played in awhile but still have pp, the value will be -1
-    countryRank: int  #if not present cause they havent played in awhile but still have pp, the value will be -1
+    globalRank: int #if not present cause they havent played in awhile but still have pp, the value will be None
+    countryRank: int  #if not present cause they havent played in awhile but still have pp, the value will be None
     totalPerforamcePoints: int
     rankedScore: int
     totalScore: int
