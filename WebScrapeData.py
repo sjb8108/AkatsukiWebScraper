@@ -59,6 +59,7 @@ def webScraper(startEndTuple):
                     else:
                         pass
                 username = username[0:len(username) - 1]
+                #These three id's have clan names that break the code so I just hard set them to there names
                 if int(id) == 50615:
                     userTable.pop(0)
                     userTable.pop(0)

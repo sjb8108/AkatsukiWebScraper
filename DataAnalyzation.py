@@ -1,5 +1,6 @@
 import time
-import matplotlib
+import matplotlib.pyplot as plt
+import numpy
 def choosingActions(dict):
     print("NOTE: A more detailed description of what data you will be seeing with be shown when picking an action")
     time.sleep(4)
@@ -61,10 +62,110 @@ def actionA(dict):
         try:
             name = input("Enter the username you would like to look up: ")
             info = dict[name]
-
+            print()
+            print(name)
+            time.sleep(1)
+            print("\tProfile Website Link: " + info.userURL)
+            time.sleep(1)
+            print("\tTotal Performace Points: " + str(info.totalPerforamcePoints))
+            time.sleep(1)
+            print("\tRanked Score: " + str(info.rankedScore))
+            time.sleep(1)
+            print("\tTotal Score: " + str(info.totalScore))
+            time.sleep(1)
+            print("\tBeatmaps Played: " + str(info.playCount))
+            time.sleep(1)
+            print("\tTotal Circles Hit: " + str(info.totalHits))
+            time.sleep(1)
+            print("\tAll Around Accuracy: " + str(info.accuracy)+"%")
+            time.sleep(1)
+            print("\tMax Combo: " + str(info.maxCombo))
+            time.sleep(1)
+            print("\tAmount of First Places on Beatmaps: " + str(info.totalFirstPlaces))
+            time.sleep(1)
+            print("\tTop Plays (in terms of how much Performance Point were awarded): ")
+            time.sleep(1)
+            x_values = []
+            y_values = []
+            listOfBestScores = info.bestScores
+            for i in range(0, len(listOfBestScores)):
+                score = listOfBestScores[i]
+                x_values.append(i+1)
+                y_value = score.playPerformancePoints
+                y_values.append(y_value)
+                print("\t\t" + score.songArtist + " - " + score.songName + " [" + score.songDiff + "]")
+                time.sleep(1)
+                print("\t\t\tOsu Beatmap Link: " + score.websiteLink)
+                time.sleep(1)
+                print("\t\t\tPerformace Points Awarded: " + str(score.playPerformancePoints))
+                time.sleep(1)
+                print("\t\t\tScore Earned: " + str(score.playScore))
+                time.sleep(1)
+                print("\t\t\tTop Combo: " + str(score.playCombo))
+                time.sleep(1)
+                print("\t\t\tPlay Accuracy: " + str(score.playAcc) + "%")
+                time.sleep(1)
+                print("\t\t\tAmount of 300's: " + str(score.play300))
+                time.sleep(1)
+                print("\t\t\tAmount of 100's: " + str(score.play100))
+                time.sleep(1)
+                print("\t\t\tAmount of 50's: " + str(score.play50))
+                time.sleep(1)
+                print("\t\t\tMiss Count: " + str(score.playMiss))
+                time.sleep(1)
+            time.sleep(1)
+            x_values.reverse()
+            y_values.reverse()
+            plt.xlabel("Beatmap")
+            plt.ylabel("Performance Points")
+            plt.title("Top Plays")
+            plt.plot(x_values, y_values)
+            plt.show()
+            print("\tMost Played Beatmaps: ")
+            time.sleep(1)
+            listOfMostPlayed = info.mostPlayedScores
+            for i in range(0, len(listOfMostPlayed)):
+                score = listOfMostPlayed[i]
+                print("\t\t" + score.songArtist + " - " + score.songName + " [" + score.songDiff + "]")
+                time.sleep(1)
+                print("\t\t\tOsu Beatmap Link: " + score.websiteLink)
+                time.sleep(1)
+                print("\t\t\tAmount Played: " + str(score.amountPlayed))
+                time.sleep(1)
+            time.sleep(1)
+            print("\tFirst Place Maps")
+            time.sleep(1)
+            listOfFirstPlace = []
+            listOfFirstPlace = info.firstPlaceScores
+            if len(listOfFirstPlace) == 0:
+                print("\tThis user has not first places")
+            else:
+                for i in range(0 , len(listOfFirstPlace)):
+                    score = listOfFirstPlace[i]
+                    print("\t\t" + score.songArtist + " - " + score.songName + " [" + score.songDiff + "]")
+                    time.sleep(1)
+                    print("\t\t\tOsu Beatmap Link: " + score.websiteLink)
+                    time.sleep(1)
+                    print("\t\t\tPerformace Points Awarded: " + str(score.playPerformancePoints))
+                    time.sleep(1)
+                    print("\t\t\tScore Earned: " + str(score.playScore))
+                    time.sleep(1)
+                    print("\t\t\tTop Combo: " + str(score.playCombo))
+                    time.sleep(1)
+                    print("\t\t\tPlay Accuracy: " + str(score.playAcc) + "%")
+                    time.sleep(1)
+                    print("\t\t\tAmount of 300's: " + str(score.play300))
+                    time.sleep(1)
+                    print("\t\t\tAmount of 100's: " + str(score.play100))
+                    time.sleep(1)
+                    print("\t\t\tAmount of 50's: " + str(score.play50))
+                    time.sleep(1)
+                    print("\t\t\tMiss Count: " + str(score.playMiss))
+                    time.sleep(1)
         except:
             print("That name does not exist or that user has no data")
             time.sleep(2)
+        finally:
             keepLookingUp = input("Would you like to keep looking up usernames, Yes or No? ")
 def actionB(dict):
     print()
