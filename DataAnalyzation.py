@@ -168,15 +168,67 @@ def actionA(dict):
         finally:
             keepLookingUp = input("Would you like to keep looking up usernames, Yes or No? ")
 def actionB(dict):
-    print()
+    print("This action will print out a top 50 list of the user that have the highest ranked score")
+    time.sleep(4)
+    dict_sorted = sorted(dict.items(), key=lambda x: x[1].rankedScore, reverse=True)
+    x_values = []
+    y_values = []
+    for i in range(0, 50):
+        time.sleep(1)
+        print(str(50-i) + ".")
+        if (50-i <= 10):
+            x_value = dict_sorted[50-i-1][0]
+            y_value = dict_sorted[50-i-1][1].rankedScore
+            x_values.append(x_value)
+            y_values.append(y_value)
+        print("\t" + dict_sorted[50-i-1][0])
+        print("\tRanked Score: " + str(dict_sorted[50-i-1][1].rankedScore))
+    plt.rc('xtick', labelsize=6)
+    plt.xlabel("User")
+    plt.ylabel("Ranked Score (In Tens of Billions)")
+    plt.title("Top 10 Users by Ranked Score")
+    plt.bar(x_values,y_values, color="aquamarine")
+    plt.show()
 def actionC(dict):
-    print()
+    # Make a graph with top 10
+    print("This action will print out a top 50 list of the user that have the highest total score")
+    time.sleep(4)
+    dict_sorted = sorted(dict.items(), key=lambda x: x[1].totalScore, reverse=True)
+    for i in range(0, 50):
+        time.sleep(1)
+        print(str(50 - i) + ".")
+        print("\t" + dict_sorted[50 - i - 1][0])
+        print("\tTotal Score: " + str(dict_sorted[50 - i - 1][1].totalScore))
 def actionD(dict):
-    print()
+    # Make a graph with top 10
+    print("This action will print out a top 50 list of the user that have the highest play count")
+    time.sleep(4)
+    dict_sorted = sorted(dict.items(), key=lambda x: x[1].playCount, reverse=True)
+    for i in range(0, 50):
+        time.sleep(1)
+        print(str(50 - i) + ".")
+        print("\t" + dict_sorted[50 - i - 1][0])
+        print("\tPlay Count: " + str(dict_sorted[50 - i - 1][1].playCount))
 def actionE(dict):
-    print()
+    # Make a graph with top 10
+    print("This action will print out a top 50 list of the user that have the highest amount of Performance Points")
+    time.sleep(4)
+    dict_sorted = sorted(dict.items(), key=lambda x: x[1].totalPerforamcePoints, reverse=True)
+    for i in range(0, 50):
+        time.sleep(1)
+        print(str(50 - i) + ".")
+        print("\t" + dict_sorted[50 - i - 1][0])
+        print("\tPerformance Points: " + str(dict_sorted[50 - i - 1][1].totalPerforamcePoints))
 def actionF(dict):
-    print()
+    # Make a graph with top 10
+    print("This action will print out a top 50 list of the user that have the highest amount of first places on beatmaps")
+    time.sleep(4)
+    dict_sorted = sorted(dict.items(), key=lambda x: x[1].totalFirstPlaces, reverse=True)
+    for i in range(0, 50):
+        time.sleep(1)
+        print(str(50 - i) + ".")
+        print("\t" + dict_sorted[50 - i - 1][0])
+        print("\tFirst Places: " + str(dict_sorted[50 - i - 1][1].totalFirstPlaces))
 def actionG(dict):
     print()
 def actionH(dict):
