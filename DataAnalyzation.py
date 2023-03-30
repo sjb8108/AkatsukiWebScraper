@@ -90,7 +90,7 @@ def actionA(dict):
             listOfBestScores = info.bestScores
             for i in range(0, len(listOfBestScores)):
                 score = listOfBestScores[i]
-                x_values.append(i+1)
+                x_values.append("#" + str(10-i))
                 y_value = score.playPerformancePoints
                 y_values.append(y_value)
                 print("\t\t" + score.songArtist + " - " + score.songName + " [" + score.songDiff + "]")
@@ -114,13 +114,19 @@ def actionA(dict):
                 print("\t\t\tMiss Count: " + str(score.playMiss))
                 time.sleep(1)
             time.sleep(1)
-            x_values.reverse()
             y_values.reverse()
-            plt.xlabel("Beatmap")
-            plt.ylabel("Performance Points")
             plt.title("Top Plays")
-            plt.plot(x_values, y_values)
-            plt.show()
+            typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+            if typeOfGraph == "Bar":
+                plt.xlabel("Performance Points")
+                plt.ylabel("Top Play Number")
+                plt.barh(x_values, y_values, color="aquamarine")
+                plt.show()
+            else:
+                plt.xlabel("Top Play Number")
+                plt.ylabel("Performance Points")
+                plt.plot(x_values, y_values, color="red")
+                plt.show()
             print("\tMost Played Beatmaps: ")
             time.sleep(1)
             listOfMostPlayed = info.mostPlayedScores
@@ -177,18 +183,27 @@ def actionB(dict):
         time.sleep(1)
         print(str(50-i) + ".")
         if (50-i <= 10):
-            x_value = dict_sorted[50-i-1][0]
-            y_value = dict_sorted[50-i-1][1].rankedScore
+            x_value = str(dict_sorted[50-i-1][0])
+            y_value = float(dict_sorted[50-i-1][1].rankedScore / 1000000000)
             x_values.append(x_value)
             y_values.append(y_value)
         print("\t" + dict_sorted[50-i-1][0])
         print("\tRanked Score: " + str(dict_sorted[50-i-1][1].rankedScore))
-    plt.rc('xtick', labelsize=6)
-    plt.xlabel("User")
-    plt.ylabel("Ranked Score (In Tens of Billions)")
-    plt.title("Top 10 Users by Ranked Score")
-    plt.bar(x_values,y_values, color="aquamarine")
-    plt.show()
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.xlabel("Ranked Score (In Billions)")
+        plt.ylabel("User")
+        plt.title("Top 10 Users by Ranked Score")
+        plt.barh(x_values,y_values, color="aquamarine")
+        plt.show()
+    else:
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("User")
+        plt.ylabel("Ranked Score (In Billions)")
+        plt.title("Top 10 Users by Ranked Score")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
 def actionC(dict):
     # Make a graph with top 10
     print("This action will print out a top 50 list of the user that have the highest total score")
