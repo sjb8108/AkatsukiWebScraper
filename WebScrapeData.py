@@ -173,13 +173,10 @@ def convertThousandsStringToInt(thousandNumber):
         else:
             stringWithoutCommas+=character
     return int(stringWithoutCommas)
-
 def convertAccuracyToFloat(accuracyNumber):
     return float(accuracyNumber[0:len(accuracyNumber)-1])
-
 def convertRankingToInt(rankNumber):
     return int(rankNumber[1:len(rankNumber)])
-
 def fixUsername(name, dictionary):
     dictionaries = dict(dictionary)
     info = dictionaries[name]
@@ -291,7 +288,6 @@ def getScores(id, type):
             userScores.append(AkatsukiWebScrape.ScoreInfo(beatMapURL, artist, name, diff, scorePlay, combo, totalPP, acc,
                                                           num300, num100, num50, numMiss))
     return (userScores, firsts)
-
 def getMostPlayed(id):
     url = "https://akatsuki.pw/api/v1/users/most_played?id="+str(id)+"&rx=0&mode=0"
     page = requests.get(url, allow_redirects=False)

@@ -13,7 +13,6 @@ import pickle #Thank god this exists
 #4. Put into a csv file(Bruh moment to make it program fast) DONEZO
 #4. Do shit with it/Ask user info to access (Will take alot of time cause theres alot to implement) working on
 #5. Orangize it and make table and graphs with it (Will be poggers) working on
-
 @dataclass
 class UserInfo:
     userURL: str
@@ -30,7 +29,6 @@ class UserInfo:
     bestScores: list
     mostPlayedScores: list
     firstPlaceScores: list #if more than ten than it will get the most recent 10 first place scores
-
 @dataclass()
 class ScoreInfo:
     websiteLink: str
@@ -45,7 +43,6 @@ class ScoreInfo:
     play100: int
     play50: int
     playMiss: int
-
 @dataclass()
 class MostScoreInfo:
     websiteLink: int
@@ -53,7 +50,6 @@ class MostScoreInfo:
     songArtist: str
     songName: str
     songDiff: int
-
 def startAndEndID():
     print("To start we will need to get an starting ID and ending ID")
     time.sleep(2)
@@ -68,7 +64,6 @@ def startAndEndID():
         startID = input("Enter the starting ID: ")
         endID = input("Entering the ending ID: ")
     return (int(startID), int(endID))
-
 def populateFile(idTuple):
     playersDict = WebScrapeData.webScraper(idTuple)
     f = open("Data/Data111000_116000.txt", "wb")
@@ -77,7 +72,6 @@ def populateFile(idTuple):
     fileLoad = open("Data/Data111000_116000.txt", "rb")
     dictionary = pickle.load(fileLoad)
     return dictionary
-
 def getAllData():
     startNum = 1000
     endingNum = 6000
@@ -93,7 +87,6 @@ def getAllData():
         endingNum+=5000
         counter+=1
     return allData
-
 def fixBuggedUsernames(dict):
     for person in dict:
         persons = str(person)
@@ -115,6 +108,8 @@ def main():
     #dict = populateFile(idTuple) used to get data but not needed in final project
     print("All data collected is from a private osu server I play on.")
     time.sleep(3)
+    print("This data was collected in early march so the data collected is different to the data on the website")
+    time.sleep(5)
     print("Once the data is loaded in you will be presented with a list of actions that you can do.")
     time.sleep(4)
     print("Choose the letter associated with action.")
@@ -129,8 +124,6 @@ def main():
     print("All data collected!")
     time.sleep(2)
     DataAnalyzation.choosingActions(dict)
-
-
 
 if __name__ == '__main__':
     main()

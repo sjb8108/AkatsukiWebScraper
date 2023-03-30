@@ -209,41 +209,130 @@ def actionC(dict):
     print("This action will print out a top 50 list of the user that have the highest total score")
     time.sleep(4)
     dict_sorted = sorted(dict.items(), key=lambda x: x[1].totalScore, reverse=True)
+    x_values = []
+    y_values = []
     for i in range(0, 50):
         time.sleep(1)
         print(str(50 - i) + ".")
+        if (50 - i <= 10):
+            x_value = str(dict_sorted[50 - i - 1][0])
+            y_value = float(dict_sorted[50 - i - 1][1].totalScore / 1000000000)
+            x_values.append(x_value)
+            y_values.append(y_value)
         print("\t" + dict_sorted[50 - i - 1][0])
         print("\tTotal Score: " + str(dict_sorted[50 - i - 1][1].totalScore))
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.xlabel("Total Score Score (In Billions)")
+        plt.ylabel("User")
+        plt.title("Top 10 Users by Total Score")
+        plt.barh(x_values, y_values, color="aquamarine")
+        plt.show()
+    else:
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("User")
+        plt.ylabel("Total Score (In Billions)")
+        plt.title("Top 10 Users by Total Score")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
 def actionD(dict):
     # Make a graph with top 10
     print("This action will print out a top 50 list of the user that have the highest play count")
     time.sleep(4)
     dict_sorted = sorted(dict.items(), key=lambda x: x[1].playCount, reverse=True)
+    x_values = []
+    y_values = []
     for i in range(0, 50):
         time.sleep(1)
         print(str(50 - i) + ".")
+        if (50 - i <= 10):
+            x_value = str(dict_sorted[50 - i - 1][0])
+            y_value = float(dict_sorted[50 - i - 1][1].playCount)
+            x_values.append(x_value)
+            y_values.append(y_value)
         print("\t" + dict_sorted[50 - i - 1][0])
         print("\tPlay Count: " + str(dict_sorted[50 - i - 1][1].playCount))
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.xlabel("Play Count")
+        plt.ylabel("User")
+        plt.title("Top 10 Users by Play Count")
+        plt.barh(x_values, y_values, color="aquamarine")
+        plt.show()
+    else:
+        print("Note: Two usernames do overlap, those being verbo irregular and BLEACH FAN")
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("User")
+        plt.ylabel("Play Count")
+        plt.title("Top 10 Users by Play Count")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
 def actionE(dict):
     # Make a graph with top 10
     print("This action will print out a top 50 list of the user that have the highest amount of Performance Points")
     time.sleep(4)
     dict_sorted = sorted(dict.items(), key=lambda x: x[1].totalPerforamcePoints, reverse=True)
+    x_values = []
+    y_values = []
     for i in range(0, 50):
         time.sleep(1)
         print(str(50 - i) + ".")
+        if (50 - i <= 10):
+            x_value = str(dict_sorted[50 - i - 1][0])
+            y_value = float(dict_sorted[50 - i - 1][1].totalPerforamcePoints)
+            x_values.append(x_value)
+            y_values.append(y_value)
         print("\t" + dict_sorted[50 - i - 1][0])
         print("\tPerformance Points: " + str(dict_sorted[50 - i - 1][1].totalPerforamcePoints))
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.xlabel("Performance Points")
+        plt.ylabel("User")
+        plt.title("Top 10 Users by Performance Points")
+        plt.barh(x_values, y_values, color="aquamarine")
+        plt.show()
+    else:
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("User")
+        plt.ylabel("Performance Points")
+        plt.title("Top 10 Users by Performance Points")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
 def actionF(dict):
     # Make a graph with top 10
     print("This action will print out a top 50 list of the user that have the highest amount of first places on beatmaps")
     time.sleep(4)
     dict_sorted = sorted(dict.items(), key=lambda x: x[1].totalFirstPlaces, reverse=True)
+    x_values = []
+    y_values = []
     for i in range(0, 50):
         time.sleep(1)
         print(str(50 - i) + ".")
+        if (50 - i <= 10):
+            x_value = str(dict_sorted[50 - i - 1][0])
+            y_value = float(dict_sorted[50 - i - 1][1].totalFirstPlaces)
+            x_values.append(x_value)
+            y_values.append(y_value)
         print("\t" + dict_sorted[50 - i - 1][0])
-        print("\tFirst Places: " + str(dict_sorted[50 - i - 1][1].totalFirstPlaces))
+        print("\tAmount of First Places: " + str(dict_sorted[50 - i - 1][1].totalFirstPlaces))
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.xlabel("Amount of First Places")
+        plt.ylabel("User")
+        plt.title("Top 10 Users by Total First Places")
+        plt.barh(x_values, y_values, color="aquamarine")
+        plt.show()
+    else:
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("User")
+        plt.ylabel("Amount of First Places")
+        plt.title("Top 10 Users by Total First Places")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
 def actionG(dict):
     print()
 def actionH(dict):
