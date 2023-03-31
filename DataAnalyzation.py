@@ -334,7 +334,49 @@ def actionF(dict):
         plt.plot(x_values, y_values, color="red")
         plt.show()
 def actionG(dict):
-    print()
+    print("You will be asked for a song title,diff, and artist and than it will see which players have that map in there top plays")
+    time.sleep(5)
+    print("It will also print the user and the info related to the score on the map you typed in")
+    time.sleep(4)
+    userTitle = input("Enter the desired Song Title: ")
+    userArtist = input("Enter the desired Song Artist: ")
+    userDiff = input("Enter the Song Difficulty: ")
+    userEnterDict = {}
+    for key in dict:
+        theInfo = dict[key]
+        scoresList = theInfo.bestScores
+        if key == "8591":
+            scoresList = theInfo.bestScores
+        if isinstance(scoresList, tuple):
+            scoresList = theInfo.bestScores[0]
+        else:
+            pass
+        if len(scoresList) == 0:
+            pass
+        else:
+            for score in scoresList:
+                if userTitle == score.songName and userArtist == score.songArtist and userDiff == score.songDiff:
+                    userEnterDict[key] = score
+    for key in userEnterDict:
+        score = userEnterDict[key]
+        print(key)
+        time.sleep(1)
+        print("\tPerformace Points Awarded: " + str(score.playPerformancePoints))
+        time.sleep(1)
+        print("\tScore Earned: " + str(score.playScore))
+        time.sleep(1)
+        print("\tTop Combo: " + str(score.playCombo))
+        time.sleep(1)
+        print("\tPlay Accuracy: " + str(score.playAcc) + "%")
+        time.sleep(1)
+        print("\tAmount of 300's: " + str(score.play300))
+        time.sleep(1)
+        print("\tAmount of 100's: " + str(score.play100))
+        time.sleep(1)
+        print("\tAmount of 50's: " + str(score.play50))
+        time.sleep(1)
+        print("\tMiss Count: " + str(score.playMiss))
+        time.sleep(1)
 def actionH(dict):
     print()
 def actionI(dict):
