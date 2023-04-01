@@ -345,8 +345,6 @@ def actionG(dict):
     for key in dict:
         theInfo = dict[key]
         scoresList = theInfo.bestScores
-        if key == "8591":
-            scoresList = theInfo.bestScores
         if isinstance(scoresList, tuple):
             scoresList = theInfo.bestScores[0]
         else:
@@ -378,7 +376,31 @@ def actionG(dict):
         print("\tMiss Count: " + str(score.playMiss))
         time.sleep(1)
 def actionH(dict):
-    print()
+    print("This action will print out the top 50 most played beatmaps")
+    time.sleep(3)
+    mostPlayedDict = {}
+    for key in dict:
+        theInfo = dict[key]
+        scoresList = theInfo.mostPlayedScores
+        for score in scoresList:
+            if score.websiteLink in mostPlayedDict:
+                playAmount = mostPlayedDict[score.websiteLink][1] + score.amountPlayed;
+                mostPlayedDict[score.websiteLink] = (score, playAmount)
+            else:
+                mostPlayedDict[score.websiteLink] = (score, score.amountPlayed)
+    dict_sorted = sorted(mostPlayedDict.keys(), key=lambda x: mostPlayedDict[x][1], reverse=True)
+    for i in range(0, 50):
+        time.sleep(1)
+        print(str(50 - i) + ".")
+        time.sleep(1)
+        print("\tOsu Beatmap Link: " + mostPlayedDict[dict_sorted[50 - i - 1]][0].websiteLink)
+        time.sleep(1)
+        print("\tSong Artist: " + mostPlayedDict[dict_sorted[50-i-1]][0].songArtist)
+        time.sleep(1)
+        print("\tSong Name: " + mostPlayedDict[dict_sorted[50 - i - 1]][0].songName)
+        time.sleep(1)
+        print("\tTotal Amount Played: "+ str(mostPlayedDict[dict_sorted[50-i-1]][1]))
+    time.sleep(1)
 def actionI(dict):
     print()
 def actionJ(dict):

@@ -45,11 +45,11 @@ class ScoreInfo:
     playMiss: int
 @dataclass()
 class MostScoreInfo:
-    websiteLink: int
+    websiteLink: str
     amountPlayed: int
     songArtist: str
     songName: str
-    songDiff: int
+    songDiff: str
 def startAndEndID():
     print("To start we will need to get an starting ID and ending ID")
     time.sleep(2)
