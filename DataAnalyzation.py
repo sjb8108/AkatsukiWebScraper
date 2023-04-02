@@ -1,6 +1,5 @@
 import time
 import matplotlib.pyplot as plt
-import numpy
 def choosingActions(dict):
     print("NOTE: A more detailed description of what data you will be seeing with be shown when picking an action")
     time.sleep(4)
@@ -422,8 +421,10 @@ def actionH(dict):
         plt.plot(x_values, y_values, color="red")
         plt.show()
 def actionI(dict):
-    print("This action will print out the top 20 users that have a combined total play count from there list of most played beatmaps")
+    print("This action will print out the top 10 users that have a combined total play count from there list of most played beatmaps")
     mostPlayedDict = {}
+    x_values = []
+    y_values = []
     for key in dict:
         theInfo = dict[key]
         scoresList = theInfo.mostPlayedScores
@@ -432,26 +433,91 @@ def actionI(dict):
             totalPlayCountFromMostPlayed+=score.amountPlayed
         mostPlayedDict[key] = (theInfo, totalPlayCountFromMostPlayed)
     dict_sorted = sorted(mostPlayedDict.keys(), key=lambda x: mostPlayedDict[x][1], reverse=True)
-    for i in range(0, 20):
+    for i in range(0, 10):
         time.sleep(1)
-        print(str(20 - i) + ".")
+        print(str(10 - i) + ".")
         time.sleep(1)
-        print("\t"+dict_sorted[20-i-1])
+        print("\t"+dict_sorted[10-i-1])
         time.sleep(1)
-        mostPlayedList = mostPlayedDict[dict_sorted[20 - i - 1]][0].mostPlayedScores
+        mostPlayedList = mostPlayedDict[dict_sorted[10 - i - 1]][0].mostPlayedScores
+        if (10 - i <= 10):
+            x_values.append("#" + str(10 - i))
+            y_value = int(mostPlayedDict[dict_sorted[10-i-1]][1])
+            y_values.append(y_value)
         for x in range (len(mostPlayedList), 0 , -1):
             mostScore = mostPlayedList[x-1]
-            print("\t\tNumber "+str(x)+" Most Played Beatmap for the User "+dict_sorted[20-i-1])
-            time.sleep(1)
+            print("\t\tNumber "+str(x)+" Most Played Beatmap for the User "+dict_sorted[10-i-1])
+            #time.sleep(1)
             print("\t\t\tOsu Website Link: "+mostScore.websiteLink)
-            time.sleep(1)
+            #time.sleep(1)
             print("\t\t\tSong Artist: "+mostScore.songArtist)
-            time.sleep(1)
+            #time.sleep(1)
             print("\t\t\tSong Name: " + mostScore.songName)
-            time.sleep(1)
+            #time.sleep(1)
             print("\t\t\tSong Diff: " + mostScore.songDiff)
-            time.sleep(1)
+            #time.sleep(1)
             print("\t\t\tAmount Played: "+str(mostScore.amountPlayed))
+            #time.sleep(1)
+        print("\t\tTotal Amount Played of Most Played Beatmaps: "+str(mostPlayedDict[dict_sorted[10-i-1]][1]))
         time.sleep(1)
+    plt.title("Most Played Beatmap")
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.ylabel("User Rank")
+        plt.xlabel("Total Amount Played of Most Played Beatmaps")
+        plt.barh(x_values, y_values, color="aquamarine")
+        plt.show()
+    else:
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("User Rank")
+        plt.ylabel("Total Amount Played of Most Played Beatmaps")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
 def actionJ(dict):
-    print()
+    print("This action will print out the top 50 beatmaps that appear in users top plays")
+    scoresInTopPlays = {}
+    x_values = []
+    y_values = []
+    for key in dict:
+        theInfo = dict[key]
+        scoresList = theInfo.bestScores
+        if isinstance(scoresList, tuple):
+            scoresList = theInfo.bestScores[0]
+        for score in scoresList:
+            if score.websiteLink in scoresInTopPlays:
+                playAmount = scoresInTopPlays[score.websiteLink][1] + 1;
+                scoresInTopPlays[score.websiteLink] = (score, playAmount)
+            else:
+                scoresInTopPlays[score.websiteLink] = (score, 1)
+    dict_sorted = sorted(scoresInTopPlays.keys(), key=lambda x: scoresInTopPlays[x][1], reverse=True)
+    for i in range(0, 50):
+        if (50 - i <= 10):
+            x_values.append("#" + str(50 - i))
+            y_value = int(scoresInTopPlays[dict_sorted[50-i-1]][1])
+            y_values.append(y_value)
+        time.sleep(1)
+        print(str(50 - i) + ".")
+        time.sleep(1)
+        print("\tOsu Beatmap Link: " + scoresInTopPlays[dict_sorted[50 - i - 1]][0].websiteLink)
+        time.sleep(1)
+        print("\tSong Artist: " + scoresInTopPlays[dict_sorted[50-i-1]][0].songArtist)
+        time.sleep(1)
+        print("\tSong Name: " + scoresInTopPlays[dict_sorted[50 - i - 1]][0].songName)
+        time.sleep(1)
+        print("\tAmount in Top Plays: "+ str(scoresInTopPlays[dict_sorted[50-i-1]][1]))
+    time.sleep(1)
+    plt.title("Most Played Beatmap in Top Plays")
+    typeOfGraph = input("What type of graph would you like to see, Bar or Line: ")
+    if typeOfGraph == "Bar":
+        plt.rc('ytick', labelsize=6)
+        plt.ylabel("Beatmap Rank")
+        plt.xlabel("Total Amount Played in User's Top Plays")
+        plt.barh(x_values, y_values, color="aquamarine")
+        plt.show()
+    else:
+        plt.rc('xtick', labelsize=6)
+        plt.xlabel("Beatmap Rank")
+        plt.ylabel("Total Amount Played in User's Top Plays")
+        plt.plot(x_values, y_values, color="red")
+        plt.show()
