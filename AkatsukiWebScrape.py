@@ -6,7 +6,7 @@ import pickle
 #Ideas:
 #me when new ideas needed
 #1. Refactor WebScrapeData.py
-#2. AHHHHHHH
+#2. AHHHHHHHH
 @dataclass
 class UserInfo:
     userURL: str
