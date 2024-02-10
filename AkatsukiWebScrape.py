@@ -2,22 +2,27 @@ import time
 from dataclasses import dataclass
 import WebScrapeData
 import DataAnalyzation
-import pickle #Thank god this exists
+import pickle
 #Ideas:
-# make it So they can enter if they want standard, taiko, catch
-# see if they can fix the bug so i can ask if they want the relax mode of not (Please akatsuki devs)
-#fix bug with song diffs having unquie character for example user 70993 can now work on
-#1. Have the user pick two numbers there difference has to be between 1000 DONE
-#2. Webscrape data from akatsuki DONEZO
-#3. Put info scraped into a dictonary and create a class for info storage. DONE BOZO
-#4. Put into a csv file(Bruh moment to make it program fast) DONEZO
-#4. Do shit with it/Ask user info to access (Will take alot of time cause theres alot to implement) working on
-#5. Orangize it and make table and graphs with it (Will be poggers) working on
+#me when new ideas needed
+#1. Refactor WebScrapeData.py
+#2. AHHHHHHH
 @dataclass
 class UserInfo:
     userURL: str
-    globalRank: int #if not present cause they havent played in awhile but still have pp, the value will be None
-    countryRank: int  #if not present cause they havent played in awhile but still have pp, the value will be None
+    userID: int
+    clanName: str
+    clanTag: str
+    followers: int
+    country: str
+    registerDate: str
+    lastDateOnline: str
+    profileImageLink: str
+    gamemodes: dict
+@dataclass()
+class GamemodeInfo:
+    globalRank: int
+    countryRank: int
     totalPerforamcePoints: int
     rankedScore: int
     totalScore: int
@@ -26,9 +31,12 @@ class UserInfo:
     accuracy: float
     maxCombo: int
     totalFirstPlaces: int
+    replaysWatched: int
+    level: float
     bestScores: list
     mostPlayedScores: list
-    firstPlaceScores: list #if more than ten than it will get the most recent 10 first place scores
+    firstPlaceScores: list
+    mostRecentScores: list
 @dataclass()
 class ScoreInfo:
     websiteLink: str
@@ -104,8 +112,8 @@ def fixBuggedUsernames(dict):
 def main():
     print("Welcome to the Akatsuki Web Scraper!")
     time.sleep(2)
-    #idTuple = startAndEndID() used to get data but not needed in final project
-    #dict = populateFile(idTuple) used to get data but not needed in final project
+    idTuple = startAndEndID()
+    dict = WebScrapeData.webScraper(idTuple)
     print("All data collected is from a private osu server I play on.")
     time.sleep(3)
     print("This data was collected in early march so the data collected is different to the data on the website")
