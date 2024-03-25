@@ -10,6 +10,7 @@ import pickle
 @dataclass
 class UserInfo:
     userURL: str
+    userName: str
     userID: int
     clanName: str
     clanTag: str
@@ -30,13 +31,14 @@ class GamemodeInfo:
     totalHits: int
     accuracy: float
     maxCombo: int
-    totalFirstPlaces: int
     replaysWatched: int
     level: float
     bestScores: list
     mostPlayedScores: list
+    totalFirstPlaces: int
     firstPlaceScores: list
     mostRecentScores: list
+    pinnedScores: list
 @dataclass()
 class ScoreInfo:
     websiteLink: str
@@ -124,7 +126,7 @@ def main():
     time.sleep(2)
     print("At the end of each action you can choose to do a different action or stop the program.")
     time.sleep(3)
-    print("Enough of me rambling lets go collect and analzye some data!")
+    print("Enough of me rambling lets go collect and analyze some data!")
     time.sleep(2)
     print("Getting and Loading data...")
     dict = getAllData()
