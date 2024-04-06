@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import AkatsukiWebScrape
 import math
+import mods
 def webScraper(startEndTuple):
     playerDictionary = {}
     for id in range(startEndTuple[0], startEndTuple[1]):
@@ -34,7 +35,7 @@ def getDate(stringDate):
     afternoon = False
     monthString = ""
     if(month == 1):
-        monthString = "Janurary"
+        monthString = "January"
     elif(month == 2):
         monthString = "February"
     elif(month == 3):
@@ -103,10 +104,10 @@ def getAllGamemodes(gamemodeStat, id):
         gamemodeKey = gamemodeArray[i]
         singleGamemodeDict = gamemodeStat[0][gamemodeName]
         globalRank = singleGamemodeDict['global_leaderboard_rank']
-        if globalRank == None:
+        if globalRank is None:
             globalRank = -1
         countryRank = singleGamemodeDict['country_leaderboard_rank']
-        if countryRank == None:
+        if countryRank is None:
             countryRank = -1
         totalPerformancePoints = singleGamemodeDict['pp']
         rankedScore = singleGamemodeDict['ranked_score']
@@ -120,99 +121,23 @@ def getAllGamemodes(gamemodeStat, id):
         levelFloat = float(singleGamemodeDict['level'])
         level = math.ceil((levelFloat*100)/100)
         bestScoreList = getBestScores(id, mode, type)
-        bestScore = { gamemodeKey[i] : bestScoreList }
-
-        print("test")
+        bestScore = {gamemodeKey: bestScoreList}
 
     return None
 def getBestScores(id, mode, type):
-    url = "https://akatsuki.gg/api/v1/users/scores/best?mode="+str(mode)+"&rx="+str(type)+"&id="+str(id)
-    page = requests.get(url, allow_redirects=False)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    scoresList = soup.text.split()
-    try:
-        index = scoresList.index("\"total\":")
-        firsts = str(scoresList[index + 1])
-        firsts = int(firsts[0:len(firsts) - 1])
-    except ValueError:
-        firsts = 0
-    idkWhatToCallThis = str("\"score\":")
-    ender = "}"
-    allScores = []
-    userScores = []
-    for x in range(len(scoresList)):
-        if idkWhatToCallThis == str(scoresList[0]):
-            score = []
-            score.append(str(scoresList[0]))
-            scoresList.remove(scoresList[0])
-            for x in range(len(scoresList)):
-                if ender == str(scoresList[x]):
-                    break
-                else:
-                    score.append(scoresList[x])
-            allScores.append(score)
-        else:
-            scoresList.remove(scoresList[0])
-    for score in allScores:
-        for x in range(len(score)):
-            if score[x] == "\"beatmapset_id\":":
-                id = str(score[x+1])
-                id = id[0:len(id)-1]
-                beatMapURL = "https://osu.ppy.sh/beatmapsets/"+id
-            if score[x] == "\"song_name\":":
-                artist = ""
-                name = ""
-                diff = ""
-                for j in range(x, score.index("\"ar\":")):
-                    if score[j] == "-":
-                        indexStart = j
-                        for k in range(x+1, j):
-                            artist = artist + score[k] + " "
-                        artist = artist[1:len(artist)-1]
-                    elif score[j].startswith("["):
-                        indexEnd = j
-                        for m in range(j, score.index("\"ar\":")):
-                            diff = diff + score[m] + " "
-                        diff = diff[1:len(diff)-4]
-                for n in range(indexStart+1,indexEnd):
-                    if score[n].startswith("\""):
-                        break
-                    if score[n].__contains__("u0026"):
-                        name = name + "&" + " "
-                    else:
-                        name = name + score[n] + " "
-                name = name[0:len(name)-1]
-            if score[x] == "\"score\":":
-                scorePlay = str(score[x + 1])
-                scorePlay = int(scorePlay[0:len(scorePlay) - 1])
-            if score[x] == "\"max_combo\":":
-                combo = str(score[x + 1])
-                combo = int(combo[0:len(combo) - 1])
-            if score[x] == "\"pp\":":
-                totalPP = str(score[x + 1])
-                totalPP = float(totalPP[0:len(totalPP) - 1])
-            if score[x] == "\"accuracy\":":
-                acc = str(score[x + 1])
-                acc = float(acc[0:len(acc) - 1])
-            if score[x] == "\"count_300\":":
-                num300 = str(score[x + 1])
-                num300 = int(num300[0:len(num300) - 1])
-            if score[x] == "\"count_100\":":
-                num100 = str(score[x + 1])
-                num100 = int(num100[0:len(num100) - 1])
-            if score[x] == "\"count_50\":":
-                num50 = str(score[x + 1])
-                num50 = int(num50[0:len(num50) - 1])
-            if score[x] == "\"count_miss\":":
-                numMiss = str(score[x + 1])
-                numMiss = int(numMiss[0:len(numMiss) - 1])
-            #Starting debugging here
-        if len(allScores) == 0:
-            return None
-        else:
-            userScores.append(AkatsukiWebScrape.ScoreInfo(beatMapURL, artist, name, diff, scorePlay, combo, totalPP, acc,
-                                                          num300, num100, num50, numMiss))
-    return (userScores, firsts)
+    url = "https://akatsuki.gg/api/v1/users/scores/best?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
+    scoresDic = requests.get(url).json()
+    if scoresDic['scores'] is None:
+        pass
+    else:
+        for i in range(0, len(scoresDic['scores'])):
+            score = scoresDic['scores'][i]
+            websiteLink = "https://osu.ppy.sh/beatmapsets/" + str(score['beatmap']['beatmapset_id']) + "#osu/" + str(score['beatmap']['beatmap_id'])
+
+            modNumber = score['mods']
+            modsCombo = mods.Mods(modNumber).short
+
+
 def getMostPlayed(id):
     url = "https://akatsuki.pw/api/v1/users/most_played?id="+str(id)+"&rx=0&mode=0"
     page = requests.get(url, allow_redirects=False)

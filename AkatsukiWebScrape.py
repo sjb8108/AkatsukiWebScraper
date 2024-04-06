@@ -45,6 +45,9 @@ class ScoreInfo:
     songArtist: str
     songName: str
     songDiff: str
+    rankStatus: str
+    approachRate: float
+    od: float
     playScore: int
     playCombo: int
     playPerformancePoints: float
@@ -53,6 +56,9 @@ class ScoreInfo:
     play100: int
     play50: int
     playMiss: int
+    mods: str
+    rank: str
+    datePlayed: str
 @dataclass()
 class MostScoreInfo:
     websiteLink: str
@@ -63,13 +69,13 @@ class MostScoreInfo:
 def startAndEndID():
     print("To start we will need to get an starting ID and ending ID")
     time.sleep(2)
-    print("Note the starting and ending ID must have a maxium difference of 1000")
+    print("Note the starting and ending ID must have a maximum difference of 1000")
     time.sleep(2)
-    print("Another note the the minuim ID is 1000, and the maxium is 112855")
+    print("Another note the the minim ID is 1000, and the maximum is 112855")
     time.sleep(2)
     startID = int(input("Enter the starting ID: "))
     endID = int(input("Entering the ending ID: "))
-    while (endID-startID > 5000000) or (startID > endID) or (startID < 1000) or (endID > 116000):
+    while (startID < 0) or (startID > endID) or (startID < 1000) or (endID > 128000):
         print("Not sufficent id inputs, try again!")
         startID = input("Enter the starting ID: ")
         endID = input("Entering the ending ID: ")
