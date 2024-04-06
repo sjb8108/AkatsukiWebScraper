@@ -1,5 +1,6 @@
 # AkatsukiWebScraper
 
+Currently need to collect data!
 This project took me over a month and half and I had a blast with it and would say its the favorite thing I've created so far.
 This is a Web Scraper that visited over 200,000 websites, over 100,000 of which I was able to collect data from.
 Akatsuki is a private server connected to the game Osu! So all data collected relates to the game. 
