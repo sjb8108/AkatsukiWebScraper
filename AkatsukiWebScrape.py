@@ -5,8 +5,9 @@ import DataAnalyzation
 import pickle
 #Ideas:
 #me when new ideas needed
-#1. Refactor WebScrapeData.py
-#2. AHHHHHHHH
+#1. Refactor WebScrapeData.py (Done)
+#2. Set rate limit tests on web scraping from akatsuki api
+#3. Akatsuki vs Osu leaderboard
 @dataclass
 class UserInfo:
     userURL: str

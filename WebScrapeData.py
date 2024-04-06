@@ -1,3 +1,5 @@
+import time
+
 from bs4 import BeautifulSoup
 import requests
 import AkatsukiWebScrape
@@ -7,6 +9,7 @@ def webScraper(startEndTuple):
     playerDictionary = {}
     for id in range(startEndTuple[0], startEndTuple[1]):
         url = "https://akatsuki.gg/api/v1/users/full?id="+str(id)
+        time.sleep(1)
         basicUserData = requests.get(url).json()
         if basicUserData['code'] == 200:
             userID = id
@@ -78,6 +81,7 @@ def getAllGamemodes(gamemodeStat, id):
     return gamemodeDict
 def getScores(id, mode, type, scored):
     url = "https://akatsuki.gg/api/v1/users/scores/"+scored+"?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
+    time.sleep(1)
     scoresDic = requests.get(url).json()
     scoreList = []
     if scoresDic['scores'] is None:
