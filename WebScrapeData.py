@@ -133,11 +133,42 @@ def getBestScores(id, mode, type):
         for i in range(0, len(scoresDic['scores'])):
             score = scoresDic['scores'][i]
             websiteLink = "https://osu.ppy.sh/beatmapsets/" + str(score['beatmap']['beatmapset_id']) + "#osu/" + str(score['beatmap']['beatmap_id'])
-
+            songInfo = getSongInfo(score['beatmap']['song_name'])
+            songArtist = songInfo[0]
+            songName = songInfo[1]
+            songDiff = songInfo[2]
             modNumber = score['mods']
             modsCombo = mods.Mods(modNumber).short
 
-
+def getSongInfo(beatmap):
+    songArray = beatmap.split(" ")
+    songArtist = ""
+    songName = ""
+    songDiff = ""
+    songInfo = []
+    i = 0
+    while(True):
+        songArtist += (songArray[i] + " ")
+        i+=1
+        if(songArray[i] == "-"):
+            songArtist = songArtist[:-1]
+            songInfo.append(songArtist)
+            break
+    i+=1
+    while(True):
+        songName += (songArray[i] + " ")
+        i+=1
+        if(songArray[i][0] == "["):
+            songName = songName[:-1]
+            songInfo.append(songName)
+            break
+    while(True):
+        songDiff += (songArray[i] + " ")
+        i+=1
+        if(i >= len(songArray)):
+            songDiff = songDiff[1:-2]
+            songInfo.append(songDiff)
+    return songInfo
 def getMostPlayed(id):
     url = "https://akatsuki.pw/api/v1/users/most_played?id="+str(id)+"&rx=0&mode=0"
     page = requests.get(url, allow_redirects=False)
