@@ -11,7 +11,7 @@ def webScraper(startEndTuple):
         if basicUserData['code'] == 200:
             userID = id
             userName = basicUserData['username']
-            userURL = url
+            userURL = "https://akatsuki.gg/u/" + str(userID)
             clanName = basicUserData['clan']['name']
             clanTag = basicUserData['clan']['tag']
             followers = basicUserData['followers']
@@ -19,9 +19,126 @@ def webScraper(startEndTuple):
             registerDate = getDate(basicUserData['registered_on'])
             lastDateOnline = getDate(basicUserData['latest_activity'])
             gamemodes = getAllGamemodes(basicUserData['stats'], id)
+            playerDictionary[id] = AkatsukiWebScrape.UserInfo(userURL, userName, userID, clanName,
+                                                              clanTag, followers, country,
+                                                              registerDate, lastDateOnline, gamemodes)
         else:
             pass
     return playerDictionary
+
+def getAllGamemodes(gamemodeStat, id):
+    gamemodeArray = ["Standard", "Taiko", "CTB", "Mania",
+                     "StandardRelax", "TaikoRelax", "CTBRelax", "ManiaRelax",
+                     "StandardAuto", "TaikoAuto", "CTBAuto", "ManiaAuto"]
+    gamemodeNameArray = ["std", "taiko", "ctb", "mania"]
+    gamemodeDict = dict()
+    count = 0
+    type = 0
+    for i in range(len(gamemodeArray)):
+        gamemodeNameArrayIndex = i % 4
+        mode = i % 4
+        if(count == 4):
+            type+=1
+            count = 0
+        else:
+            count+=1
+        gamemodeName = gamemodeNameArray[gamemodeNameArrayIndex]
+        gamemodeKey = gamemodeArray[i]
+        singleGamemodeDict = gamemodeStat[0][gamemodeName]
+        globalRank = singleGamemodeDict['global_leaderboard_rank']
+        if globalRank is None:
+            globalRank = -1
+        countryRank = singleGamemodeDict['country_leaderboard_rank']
+        if countryRank is None:
+            countryRank = -1
+        totalPerformancePoints = singleGamemodeDict['pp']
+        rankedScore = singleGamemodeDict['ranked_score']
+        totalScore = singleGamemodeDict['total_score']
+        playcount = singleGamemodeDict['playcount']
+        totalHits = singleGamemodeDict['total_hits']
+        accuracyFloat = float(singleGamemodeDict['accuracy'])
+        accuracy = math.ceil((accuracyFloat*100)/100)
+        maxCombo = singleGamemodeDict['max_combo']
+        replaysWatched = singleGamemodeDict['replays_watched']
+        levelFloat = float(singleGamemodeDict['level'])
+        level = math.ceil((levelFloat*100)/100)
+        bestScoresList = getScores(id, mode, type, "best")
+        mostPlayedScoresList = getMostPlayed(id, mode, type)
+        firstPlaceInfo = getFirstPlaceInfo(id, mode, type, "first")
+        totalFirstPlaces = firstPlaceInfo[0]
+        firstPlaceScoresList = firstPlaceInfo[1]
+        mostRecentScoresList = getScores(id, mode, type, "recent")
+        pinnedScoresList = getScores(id, mode, type, "pinned")
+        gamemodeDict[gamemodeKey] = AkatsukiWebScrape.GamemodeInfo(globalRank, countryRank, totalPerformancePoints,
+                                                                   rankedScore, totalScore, playcount, totalHits,
+                                                                   accuracy, maxCombo, replaysWatched, level,
+                                                                   bestScoresList, mostPlayedScoresList, totalFirstPlaces,
+                                                                   firstPlaceScoresList, mostRecentScoresList,
+                                                                   pinnedScoresList)
+    return gamemodeDict
+def getScores(id, mode, type, scored):
+    url = "https://akatsuki.gg/api/v1/users/scores/"+scored+"?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
+    scoresDic = requests.get(url).json()
+    scoreList = []
+    if scoresDic['scores'] is None:
+        return None
+    else:
+        for i in range(0, len(scoresDic['scores'])):
+            score = scoresDic['scores'][i]
+            websiteLink = "https://osu.ppy.sh/beatmapsets/" + str(score['beatmap']['beatmapset_id']) + \
+                          "#" + getMode(mode) +"/" + str(score['beatmap']['beatmap_id'])
+            songInfo = getSongInfo(score['beatmap']['song_name'])
+            songArtist = songInfo[0]
+            songName = songInfo[1]
+            songDiff = songInfo[2]
+            rankedStatus = getRankStatus(score['beatmap']['ranked'])
+            approachRate = score['beatmap']['ar']
+            od = score['beatmap']['od']
+            playScore = score['score']
+            playCombo = score['max_combo']
+            playPerformancePoints = score['pp']
+            playAcc = score['accuracy']
+            play300 = score['count_300'] + score['count_geki']
+            play100 = score['count_100'] + score['count_katu']
+            play50 = score['count_50']
+            playMiss = score['count_miss']
+            modNumber = score['mods']
+            modsCombo = mods.Mods(modNumber).short
+            rank = score['rank']
+            datePlayed = getDate(score['time'])
+            completed = True
+            if(scored == "recent" or scored == "pinned"):
+                complete = score['completed']
+                if(complete == 0):
+                    completed = False
+                    rank = "F"
+            scoreList.append(AkatsukiWebScrape.ScoreInfo(websiteLink, songArtist, songName,
+                                                             songDiff, rankedStatus, approachRate,
+                                                             od, playScore, playCombo, playPerformancePoints,
+                                                             playAcc, play300, play100, play50, playMiss,
+                                                             modsCombo, rank, datePlayed, completed))
+        return scoreList
+
+def getMostPlayed(id, mode, type):
+    url = "https://akatsuki.gg/api/v1/users/scores/most_played?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
+    mostScoresDic = requests.get(url).json()
+    mostScoresList = []
+    if mostScoresDic['most_played_beatmaps'] is None:
+        return None
+    else:
+        for i in range(0, len(mostScoresDic['most_played_beatmaps'])):
+            score = mostScoresDic['most_played_beatmap'][i]
+            websiteLink = "https://osu.ppy.sh/beatmapsets/" + str(score['beatmap']['beatmapset_id']) +\
+                          "#"+ getMode(mode) +"/" + str(score['beatmap']['beatmap_id'])
+            songInfo = getSongInfo(score['beatmap']['song_name'])
+            songArtist = songInfo[0]
+            songName = songInfo[1]
+            songDiff = songInfo[2]
+            rankedStatus = getRankStatus(score['beatmap']['ranked'])
+            playcount = score['playcount']
+            mostScoresList.append(AkatsukiWebScrape.MostScoreInfo(websiteLink, songArtist, songName,
+                                                                  songDiff, rankedStatus, playcount))
+        return mostScoresList
 
 def getDate(stringDate):
     splitDate = stringDate.split("-")
@@ -84,82 +201,15 @@ def getDate(stringDate):
         else:
             return " " + monthString + " " + str(day) + "th " + year + " at " + str(hour) + ":" + minute + " PM"
 
-def getAllGamemodes(gamemodeStat, id):
-    gamemodeArray = ["Standard", "Taiko", "CTB", "Mania",
-                     "StandardRelax", "TaikoRelax", "CTBRelax", "ManiaRelax",
-                     "StandardAuto", "TaikoAuto", "CTBAuto", "ManiaAuto"]
-    gamemodeNameArray = ["std", "taiko", "ctb", "mania"]
-    gamemodeDict = dict()
-    count = 0
-    type = 0
-    for i in range(len(gamemodeArray)):
-        gamemodeNameArrayIndex = i % 4
-        mode = i % 4
-        if(count == 4):
-            type+=1
-            count = 0
-        else:
-            count+=1
-        gamemodeName = gamemodeNameArray[gamemodeNameArrayIndex]
-        gamemodeKey = gamemodeArray[i]
-        singleGamemodeDict = gamemodeStat[0][gamemodeName]
-        globalRank = singleGamemodeDict['global_leaderboard_rank']
-        if globalRank is None:
-            globalRank = -1
-        countryRank = singleGamemodeDict['country_leaderboard_rank']
-        if countryRank is None:
-            countryRank = -1
-        totalPerformancePoints = singleGamemodeDict['pp']
-        rankedScore = singleGamemodeDict['ranked_score']
-        totalScore = singleGamemodeDict['total_score']
-        playcount = singleGamemodeDict['playcount']
-        totalHits = singleGamemodeDict['total_hits']
-        accuracyFloat = float(singleGamemodeDict['accuracy'])
-        accuracy = math.ceil((accuracyFloat*100)/100)
-        maxCombo = singleGamemodeDict['max_combo']
-        replaysWatched = singleGamemodeDict['replays_watched']
-        levelFloat = float(singleGamemodeDict['level'])
-        level = math.ceil((levelFloat*100)/100)
-        bestScoreList = getBestScores(id, mode, type)
-        bestScore = {gamemodeKey: bestScoreList}
-
-    return None
-def getBestScores(id, mode, type):
-    url = "https://akatsuki.gg/api/v1/users/scores/best?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
-    scoresDic = requests.get(url).json()
-    bestScoreList = []
-    if scoresDic['scores'] is None:
-        pass
+def getFirstPlaceInfo(id, mode, type, scored):
+    url = "https://akatsuki.gg/api/v1/users/scores/first?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
+    firstPlaceScoresDic = requests.get(url).json()
+    totalFirstPlaces = firstPlaceScoresDic['total']
+    if totalFirstPlaces == 0:
+        return (0, None)
     else:
-        for i in range(0, len(scoresDic['scores'])):
-            score = scoresDic['scores'][i]
-            websiteLink = "https://osu.ppy.sh/beatmapsets/" + str(score['beatmap']['beatmapset_id']) + "#osu/" + str(score['beatmap']['beatmap_id'])
-            songInfo = getSongInfo(score['beatmap']['song_name'])
-            songArtist = songInfo[0]
-            songName = songInfo[1]
-            songDiff = songInfo[2]
-            rankedStatus = getRankStatus(score['beatmap']['ranked'])
-            approachRate = score['beatmap']['ar']
-            od = score['beatmap']['od']
-            playScore = score['score']
-            playCombo = score['max_combo']
-            playPerformancePoints = score['pp']
-            playAcc = score['accuracy']
-            play300 = score['count_300'] + score['count_geki']
-            play100 = score['count_100'] + score['count_katu']
-            play50 = score['count_50']
-            playMiss = score['count_miss']
-            modNumber = score['mods']
-            modsCombo = mods.Mods(modNumber).short
-            rank = score['rank']
-            datePlayed = getDate(score['time'])
-            bestScoreList.append(AkatsukiWebScrape.ScoreInfo(websiteLink, songArtist, songName,
-                                                             songDiff, rankedStatus, approachRate,
-                                                             od, playScore, playCombo, playPerformancePoints,
-                                                             playAcc, play300, play100, play50, playMiss,
-                                                             modsCombo, rank, datePlayed))
-        return bestScoreList
-
+        firstPlaceScores = getScores(id, mode, type, scored)
+        return (totalFirstPlaces, firstPlaceScores)
 def getSongInfo(beatmap):
     songArray = beatmap.split(" ")
     songArtist = ""
@@ -188,6 +238,7 @@ def getSongInfo(beatmap):
         if(i >= len(songArray)):
             songDiff = songDiff[1:-2]
             songInfo.append(songDiff)
+            break
     return songInfo
 
 def getRankStatus(status):
@@ -199,61 +250,13 @@ def getRankStatus(status):
         return "Qualified"
     else:
         return "Unranked"
-def getMostPlayed(id):
-    url = "https://akatsuki.pw/api/v1/users/most_played?id="+str(id)+"&rx=0&mode=0"
-    page = requests.get(url, allow_redirects=False)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    scoresList = soup.text.split()
-    idkWhatToCallThis2 = str("\"playcount\":")
-    ender = "}"
-    allScores = []
-    userMostScores = []
-    for x in range(len(scoresList)):
-        if idkWhatToCallThis2 == str(scoresList[0]):
-            score = []
-            score.append(str(scoresList[0]))
-            scoresList.remove(scoresList[0])
-            for x in range(len(scoresList)):
-                if ender == str(scoresList[x]):
-                    break
-                else:
-                    score.append(scoresList[x])
-            allScores.append(score)
-        else:
-            scoresList.remove(scoresList[0])
-    for score in allScores:
-        for x in range(len(score)):
-            if score[x] == "\"beatmapset_id\":":
-                id = str(score[x+1])
-                id = id[0:len(id)-1]
-                beatMapURL = "https://osu.ppy.sh/beatmapsets/"+id
-            if score[x] == "\"song_name\":":
-                artist = ""
-                name = ""
-                diff = ""
-                for j in range(x, score.index("\"ar\":")):
-                    if score[j] == "-":
-                        indexStart = j
-                        for k in range(x+1, j):
-                            artist = artist + score[k] + " "
-                        artist = artist[1:len(artist)-1]
-                    elif score[j].startswith("["):
-                        indexEnd = j
-                        for m in range(j, score.index("\"ar\":")):
-                            diff = diff + score[m] + " "
-                        diff = diff[1:len(diff)-4]
-                for n in range(indexStart+1,indexEnd):
-                    if score[n].startswith("\""):
-                        break
-                    name = name + score[n] + " "
-            if score[x] == "\"playcount\":":
-                count = str(score[x + 1])
-                count = int(count[0:len(count) - 1])
-            #Start debugging here
-        if len(allScores) == 0:
-            return None
-        elif len(userMostScores) >= 10:
-            break
-        else:
-            userMostScores.append(AkatsukiWebScrape.MostScoreInfo(beatMapURL, count, artist, name, diff))
-    return userMostScores
+
+def getMode(mode):
+    if (mode == 0):
+        return "osu"
+    elif (mode == 1):
+        return "taiko"
+    elif (mode == 2):
+        return "fruits"
+    else:
+        return "mania"

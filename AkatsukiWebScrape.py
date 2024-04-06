@@ -59,13 +59,15 @@ class ScoreInfo:
     mods: str
     rank: str
     datePlayed: str
+    completed: bool
 @dataclass()
 class MostScoreInfo:
     websiteLink: str
-    amountPlayed: int
     songArtist: str
     songName: str
     songDiff: str
+    rankedStatus: int
+    amountPlayed: int
 def startAndEndID():
     print("To start we will need to get an starting ID and ending ID")
     time.sleep(2)
