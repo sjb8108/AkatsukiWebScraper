@@ -127,6 +127,7 @@ def getAllGamemodes(gamemodeStat, id):
 def getBestScores(id, mode, type):
     url = "https://akatsuki.gg/api/v1/users/scores/best?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
     scoresDic = requests.get(url).json()
+    bestScoreList = []
     if scoresDic['scores'] is None:
         pass
     else:
@@ -137,8 +138,27 @@ def getBestScores(id, mode, type):
             songArtist = songInfo[0]
             songName = songInfo[1]
             songDiff = songInfo[2]
+            rankedStatus = getRankStatus(score['beatmap']['ranked'])
+            approachRate = score['beatmap']['ar']
+            od = score['beatmap']['od']
+            playScore = score['score']
+            playCombo = score['max_combo']
+            playPerformancePoints = score['pp']
+            playAcc = score['accuracy']
+            play300 = score['count_300'] + score['count_geki']
+            play100 = score['count_100'] + score['count_katu']
+            play50 = score['count_50']
+            playMiss = score['count_miss']
             modNumber = score['mods']
             modsCombo = mods.Mods(modNumber).short
+            rank = score['rank']
+            datePlayed = getDate(score['time'])
+            bestScoreList.append(AkatsukiWebScrape.ScoreInfo(websiteLink, songArtist, songName,
+                                                             songDiff, rankedStatus, approachRate,
+                                                             od, playScore, playCombo, playPerformancePoints,
+                                                             playAcc, play300, play100, play50, playMiss,
+                                                             modsCombo, rank, datePlayed))
+        return bestScoreList
 
 def getSongInfo(beatmap):
     songArray = beatmap.split(" ")
@@ -169,6 +189,16 @@ def getSongInfo(beatmap):
             songDiff = songDiff[1:-2]
             songInfo.append(songDiff)
     return songInfo
+
+def getRankStatus(status):
+    if(status == 2):
+        return "ranked"
+    elif(status == 5):
+        return "loved"
+    elif(status == 3):
+        return "Qualified"
+    else:
+        return "Unranked"
 def getMostPlayed(id):
     url = "https://akatsuki.pw/api/v1/users/most_played?id="+str(id)+"&rx=0&mode=0"
     page = requests.get(url, allow_redirects=False)
