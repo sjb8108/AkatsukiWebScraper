@@ -3,7 +3,6 @@ import time
 from bs4 import BeautifulSoup
 import requests
 import AkatsukiWebScrape
-import math
 import mods
 def webScraper(startEndTuple):
     playerDictionary = {}
@@ -60,11 +59,11 @@ def getAllGamemodes(gamemodeStat, id):
         playcount = singleGamemodeDict['playcount']
         totalHits = singleGamemodeDict['total_hits']
         accuracyFloat = float(singleGamemodeDict['accuracy'])
-        accuracy = math.ceil((accuracyFloat*100)/100)
+        accuracy = round(accuracyFloat, 2)
         maxCombo = singleGamemodeDict['max_combo']
         replaysWatched = singleGamemodeDict['replays_watched']
         levelFloat = float(singleGamemodeDict['level'])
-        level = math.ceil((levelFloat*100)/100)
+        level = round(levelFloat, 2)
         bestScoresList = getScores(id, mode, type, "best")
         mostPlayedScoresList = getMostPlayed(id, mode, type)
         firstPlaceInfo = getFirstPlaceInfo(id, mode, type, "first")
@@ -124,14 +123,14 @@ def getScores(id, mode, type, scored):
         return scoreList
 
 def getMostPlayed(id, mode, type):
-    url = "https://akatsuki.gg/api/v1/users/scores/most_played?mode="+str(mode)+"&l=50&rx="+str(type)+"&id="+str(id)
+    url = "https://akatsuki.gg/api/v1/users/most_played?"+"&id="+str(id)+"&mode="+str(mode)+"&l=50&rx="+str(type)
     mostScoresDic = requests.get(url).json()
     mostScoresList = []
     if mostScoresDic['most_played_beatmaps'] is None:
         return None
     else:
         for i in range(0, len(mostScoresDic['most_played_beatmaps'])):
-            score = mostScoresDic['most_played_beatmap'][i]
+            score = mostScoresDic['most_played_beatmaps'][i]
             websiteLink = "https://osu.ppy.sh/beatmapsets/" + str(score['beatmap']['beatmapset_id']) +\
                           "#"+ getMode(mode) +"/" + str(score['beatmap']['beatmap_id'])
             songInfo = getSongInfo(score['beatmap']['song_name'])
@@ -232,7 +231,9 @@ def getSongInfo(beatmap):
     while(True):
         songName += (songArray[i] + " ")
         i+=1
-        if(songArray[i][0] == "["):
+        if(len(songArray[i]) == 0):
+            pass
+        elif(songArray[i][0] == "["):
             songName = songName[:-1]
             songInfo.append(songName)
             break

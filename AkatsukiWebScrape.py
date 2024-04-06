@@ -79,7 +79,7 @@ def startAndEndID():
     startID = int(input("Enter the starting ID: "))
     endID = int(input("Entering the ending ID: "))
     while (startID < 0) or (startID > endID) or (startID < 1000) or (endID > 128000):
-        print("Not sufficent id inputs, try again!")
+        print("Not sufficient id inputs, try again!")
         startID = input("Enter the starting ID: ")
         endID = input("Entering the ending ID: ")
     return (int(startID), int(endID))
@@ -106,20 +106,6 @@ def getAllData():
         endingNum+=5000
         counter+=1
     return allData
-def fixBuggedUsernames(dict):
-    for person in dict:
-        persons = str(person)
-        ascii = (ord(persons[0:1]))
-        if (ascii > 127):
-            dict = WebScrapeData.fixUsername(persons, dict)
-        elif (ascii == 32 or ascii == 33 or ascii == 45 or ascii == 91 or ascii == 93 or ascii == 95):
-            pass
-        elif ((ascii >= 48 and ascii <= 57) or (ascii >= 65 and ascii <= 90) or (
-                ascii >= 97 and ascii <= 122)):
-            pass
-        else:
-            dict = WebScrapeData.fixUsername(persons, dict)
-    return dict
 def main():
     print("Welcome to the Akatsuki Web Scraper!")
     time.sleep(2)
@@ -139,7 +125,6 @@ def main():
     time.sleep(2)
     print("Getting and Loading data...")
     dict = getAllData()
-    dict = fixBuggedUsernames(dict)
     print("All data collected!")
     time.sleep(2)
     DataAnalyzation.choosingActions(dict)
